@@ -1,0 +1,95 @@
+{{- if .Values.postgres.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgres
+  labels:
+    {{- include "neos-ci.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres
+  {{- with merge (deepCopy .Values.postgres.deploymentAnnotations) .Values.default.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "neos-ci.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgres
+  revisionHistoryLimit: 0
+  template:
+    metadata:
+      {{- with merge (deepCopy .Values.postgres.podAnnotations) .Values.default.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "neos-ci.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: postgres
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: postgres-init
+          image: "{{ .Values.postgres.image.repository }}:{{ default .Values.default.image.tag .Values.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cat <<EOF > /docker-entrypoint-initdb.d/create-databases.sql
+              {{range $database := .Values.postgres.databases -}}
+              CREATE DATABASE {{ $database }} OWNER {{ $.Values.postgres.env.POSTGRES_USER | quote }};
+              {{end -}}
+              EOF
+          volumeMounts:
+            - name: initdb-scripts
+              mountPath: /docker-entrypoint-initdb.d
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          env:
+            {{- range $key, $value := .Values.postgres.env }}
+            - name: {{ $key }}
+              value: {{ quote $value }}
+            {{- end }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "psql -U $POSTGRES_USER -d $POSTGRES_USER -c 'SELECT 1'"]
+            initialDelaySeconds: 0
+            periodSeconds: 30
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "psql -U $POSTGRES_USER -d $POSTGRES_USER -c 'SELECT 1'"]
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
+          volumeMounts:
+            - name: initdb-scripts
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        # Use an empty dir volume to share the initdb directory between the init container and the main container
+        - name: initdb-scripts
+          emptyDir: {}
+      {{- with .Values.postgres.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgres.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgres.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

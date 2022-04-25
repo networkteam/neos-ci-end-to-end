@@ -1,0 +1,18 @@
+# One-time setup for PVCs of staging environment (these are not created by Helm)
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: staging-neos-data
+  namespace: dev-neos-ci
+  labels:
+    app.kubernetes.io/component: neos
+    app.kubernetes.io/instance: staging
+    app.kubernetes.io/name: neos-demo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: rbd-ssd
+  resources:
+    requests:
+      storage: 10Gi

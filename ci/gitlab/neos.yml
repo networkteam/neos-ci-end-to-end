@@ -1,0 +1,116 @@
+.neos-job:
+  extends: .component-job
+  variables:
+    COMPONENT: neos
+  before_script:
+    - !reference [.docker-build-default, before_script]
+    - export COMPOSER_CACHE_DIR=${CI_PROJECT_DIR}/.composer
+    - cd neos
+  rules:
+    # Also run jobs if shared UI components changed
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - common/packages/ui-components/**/*
+    - !reference [.component-job, rules]
+
+# Build frontend assets
+neos:assets:
+  extends: .neos-job
+  stage: build
+  needs: []
+  dependencies: []
+  image: registry.networkteam.com/networkteam/build/assets:node-16
+  script:
+    - yarn install
+    - yarn neos:build
+  cache:
+    key: "js"
+    paths:
+      - .yarn/cache
+      - .yarn/unplugged
+  artifacts:
+    paths:
+      - neos/DistributionPackages/*/Resources/Public/Dist
+
+# Install Composer dependencies
+neos:composer:
+  extends: .neos-job
+  stage: build
+  needs:
+    - neos:assets
+  dependencies:
+    - neos:assets
+  image: registry.networkteam.com/networkteam/build/php:8.1
+  script:
+    # COMPOSER_MIRROR_PATH_REPOS is important to prevent issues with symlinks in containers
+    - COMPOSER_MIRROR_PATH_REPOS=1 composer install
+  cache:
+    key: "php"
+    paths:
+      - .composer
+  artifacts:
+    paths:
+      - neos/bin/
+      - neos/Build/
+      - neos/Packages
+      - neos/Configuration
+      - neos/Web
+      - neos/flow
+
+# Build docker image for PHP FPM
+neos:docker:
+  extends:
+    - .neos-job
+    - .docker-build
+  stage: docker-build
+  needs:
+    - neos:composer
+    - neos:assets
+  dependencies:
+    - neos:composer
+    - neos:assets
+  variables:
+    # Note: Kaniko build script uses another env var for the project component
+    PROJECT_COMPONENT: neos
+
+# Copy latest docker image for component if no changes occurred
+neos:copy-docker:
+  extends: .component-dockercopy-job
+  variables:
+    COMPONENT: neos
+
+neos:acceptance:
+  # TODO Remove once it passes
+  allow_failure: true
+  extends: .neos-job
+  stage: acceptance
+  dependencies: []
+  needs:
+    - job: deploy:integration
+      optional: true
+    - job: deploy:review
+      optional: true
+  image: mcr.microsoft.com/playwright:v1.21.1-focal
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+    variables:
+      RELEASE_NAME: $CI_COMMIT_REF_SLUG
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    variables:
+      RELEASE_NAME: integration
+  script:
+    - export BASE_URL=https://neos-demo-$RELEASE_NAME.k.networkteam.com
+    - yarn install
+    - yarn test
+  artifacts:
+    when: always
+    paths:
+      - neos/test-results
+    expire_in: 14 days
+    reports:
+      junit: neos/test-results/report.xml
+  cache:
+    key: "js"
+    paths:
+      - .yarn/cache
+      - .yarn/unplugged

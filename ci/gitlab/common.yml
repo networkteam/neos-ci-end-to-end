@@ -1,0 +1,41 @@
+.common-ui-components-job:
+  extends: .component-job
+  variables:
+    COMPONENT: common/packages/ui-components
+  before_script:
+    - !reference [.docker-build-default, before_script]
+    - cd common/packages/ui-components
+
+common-ui-components:acceptance:
+  extends: .common-ui-components-job
+  stage: acceptance
+  dependencies: []
+  needs:
+    - job: deploy:integration
+      optional: true
+    - job: deploy:review
+      optional: true
+  image: mcr.microsoft.com/playwright:v1.21.1-focal
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+    variables:
+      RELEASE_NAME: $CI_COMMIT_REF_SLUG
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    variables:
+      RELEASE_NAME: integration
+  script:
+    - export BASE_URL=https://neos-demo-$RELEASE_NAME.k.networkteam.com
+    - yarn install
+    - yarn test
+  artifacts:
+    when: always
+    paths:
+      - common/packages/ui-components/test-results
+    expire_in: 14 days
+    reports:
+      junit: common/packages/ui-components/test-results/report.xml
+  cache:
+    key: "js"
+    paths:
+      - .yarn/cache
+      - .yarn/unplugged

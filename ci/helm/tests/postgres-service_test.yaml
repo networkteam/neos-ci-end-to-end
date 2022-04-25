@@ -1,0 +1,18 @@
+templates:
+  - postgres-service.yaml
+tests:
+  - it: matches snapshot with review deployment
+    set:
+      default:
+        image:
+          tag: my-release
+        annotations:
+          app.gitlab.com/env: foo
+          app.gitlab.com/app: bar
+
+      postgres:
+        enabled: true
+    release:
+      name: my-release
+    asserts:
+      - matchSnapshot: {}

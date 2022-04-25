@@ -1,0 +1,33 @@
+variables:
+  HELM_IMAGE: "registry.networkteam.com/networkteam/docker/helm-deploy:0.4.0"
+
+# A template job for the helm chart itself (e.g. unit tests)
+.ci-helm-job:
+  extends: .component-job
+  variables:
+    COMPONENT: ci/helm
+  before_script:
+    - !reference [.docker-build-default, before_script]
+    - cd ci/helm
+
+# Unit test helm chart
+ci-helm:test:
+  extends: .ci-helm-job
+  stage: test
+  needs: []
+  dependencies: []
+  image: $HELM_IMAGE
+  script:
+    - helm unittest -3 -o junit.xml -t junit .
+  artifacts:
+    when: always
+    reports:
+      junit: ci/helm/junit.xml
+
+# A template job for deployments that sets the chart and app version
+.helm-deploy-job:
+  before_script:
+    - !reference [.docker-build-default, before_script]
+    - cd ci/helm
+    - LATEST_TAG=$(git describe --tags --abbrev=0) yq -i '.version = strenv(LATEST_TAG)' Chart.yaml
+    - yq -i '.appVersion = strenv(CI_COMMIT_REF_NAME)' Chart.yaml

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-neos
+  labels:
+    {{- include "neos-ci.labels" . | nindent 4 }}
+    app.kubernetes.io/component: neos
+  {{- with .Values.default.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.neos.service.type }}
+  ports:
+    - port: {{ .Values.neos.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "neos-ci.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: neos

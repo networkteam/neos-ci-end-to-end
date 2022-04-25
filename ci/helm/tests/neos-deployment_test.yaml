@@ -1,0 +1,86 @@
+templates:
+  - neos-deployment.yaml
+tests:
+  - it: matches snapshot with review deployment
+    set:
+      neos:
+        php:
+          env:
+            NEOS_CREATE_ADMIN_USER_NAME: admin
+            NEOS_CREATE_ADMIN_USER_PASSWORD: password
+            NEOS_IMPORT_SITE_PACKAGE_KEY: 'Neos.Demo'
+
+      default:
+        image:
+          tag: my-release
+        annotations:
+          app.gitlab.com/env: foo
+          app.gitlab.com/app: bar
+
+      postgres:
+        enabled: true
+    release:
+      name: my-release
+    asserts:
+      - matchSnapshot: {}
+  - it: php container should use default tag if none is specified
+    set:
+      default.image.tag: my-feature
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.networkteam.com/chlubek/neos-ci-end-to-end/neos:my-feature
+  - it: nginx container should not use default tag if one is specified
+    set:
+      default.image.tag: my-feature
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[1].image
+          value: registry.networkteam.com/networkteam/docker/nginx:1.3
+  - it: php container sets env for local postgres if local enabled
+    set:
+      postgres.enabled: true
+    release:
+      name: my-release
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FLOW_POSTGRESQL_HOST
+            value: my-release-postgres
+  - it: php container sets env for external postgres if local not enabled
+    set:
+      postgres.enabled: false
+      neos.postgres.external.host: my-external-postgres
+    release:
+      name: my-release
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FLOW_POSTGRESQL_HOST
+            value: my-external-postgres
+  - it: uses volume and volume mount with persistence enabled
+    set:
+      neos.persistence:
+        enabled: true
+        existingPvc: neos-data
+    release:
+      name: my-release
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: data-persistent
+            mountPath: /app/Data/Persistent
+      - contains:
+          path: spec.template.spec.containers[1].volumeMounts
+          content:
+            name: data-persistent
+            mountPath: /app/Data/Persistent
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: data-persistent
+            persistentVolumeClaim:
+              claimName: neos-data

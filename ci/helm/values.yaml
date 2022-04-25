@@ -1,0 +1,150 @@
+default:
+  image:
+    # A default image tag for the project images (excluding Nginx)
+    tag: 'latest'
+
+  ingress:
+    # Default annotations for all ingresses
+    annotations: {}
+
+  # Default annotations for all resources
+  annotations: {}
+
+postgres:
+  # A locally deployed postgres database (without persistence)
+  enabled: false
+
+  image:
+    repository: "postgres"
+    tag: "13"
+    pullPolicy: Always
+
+  env:
+    POSTGRES_PASSWORD: only-for-development
+    POSTGRES_USER: neos
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  service:
+    type: ClusterIP
+    port: 5432
+
+  deploymentAnnotations: {}
+
+  podAnnotations: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+neos:
+  replicaCount: 1
+  revisionHistoryLimit: 0
+  strategyType: Recreate
+
+  # Neos Deploymnent uses 2 containers for PHP FPM and a Nginx webserver
+  php:
+    image:
+      repository: 'registry.networkteam.com/chlubek/neos-ci-end-to-end/neos'
+      # tag: 'latest'
+      pullPolicy: Always
+    env:
+      FPM_FASTCGI_ADDRESS: localhost:9000
+      FLOW_HTTP_TRUSTED_PROXIES: "*"
+    resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+  nginx:
+    image:
+      repository: 'registry.networkteam.com/networkteam/docker/nginx'
+      tag: '1.3'
+      pullPolicy: Always
+    env:
+      FPM_FASTCGI_ADDRESS: localhost:9000
+    resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+
+  persistence:
+    enabled: false
+
+    existingPvc: ""
+
+  postgres:
+    # Use an external postgres database
+    external:
+      host: ""
+      port: 5432
+      user: ""
+      passwordSecret:
+        name: ""
+        key: ""
+      database: ""
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hostnames: []
+    #  - neos-integration.example.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - neos-integration.example.local
+
+  deploymentAnnotations: {}
+
+  podAnnotations: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""

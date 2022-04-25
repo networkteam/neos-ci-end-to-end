@@ -1,0 +1,84 @@
+matches snapshot with review deployment:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        app.gitlab.com/app: bar
+        app.gitlab.com/env: foo
+      labels:
+        app.kubernetes.io/component: postgres
+        app.kubernetes.io/instance: my-release
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: neos-ci
+        app.kubernetes.io/version: 1.0.0
+        helm.sh/chart: neos-ci-0.1.0
+      name: my-release-postgres
+    spec:
+      replicas: 1
+      revisionHistoryLimit: 0
+      selector:
+        matchLabels:
+          app.kubernetes.io/component: postgres
+          app.kubernetes.io/instance: my-release
+          app.kubernetes.io/name: neos-ci
+      template:
+        metadata:
+          annotations:
+            app.gitlab.com/app: bar
+            app.gitlab.com/env: foo
+          labels:
+            app.kubernetes.io/component: postgres
+            app.kubernetes.io/instance: my-release
+            app.kubernetes.io/name: neos-ci
+        spec:
+          containers:
+          - env:
+            - name: POSTGRES_PASSWORD
+              value: only-for-development
+            - name: POSTGRES_USER
+              value: neos
+            image: postgres:13
+            imagePullPolicy: Always
+            livenessProbe:
+              exec:
+                command:
+                - sh
+                - -c
+                - psql -U $POSTGRES_USER -d $POSTGRES_USER -c 'SELECT 1'
+              initialDelaySeconds: 0
+              periodSeconds: 30
+            name: postgres
+            ports:
+            - containerPort: 5432
+              name: postgres
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - sh
+                - -c
+                - psql -U $POSTGRES_USER -d $POSTGRES_USER -c 'SELECT 1'
+              failureThreshold: 3
+              initialDelaySeconds: 1
+              periodSeconds: 10
+            resources: {}
+            volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: initdb-scripts
+          initContainers:
+          - command:
+            - /bin/sh
+            - -c
+            - |
+              cat <<EOF > /docker-entrypoint-initdb.d/create-databases.sql
+              EOF
+            image: postgres:13
+            imagePullPolicy: Always
+            name: postgres-init
+            volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: initdb-scripts
+          volumes:
+          - emptyDir: {}
+            name: initdb-scripts

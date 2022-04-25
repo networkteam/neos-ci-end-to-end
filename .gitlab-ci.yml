@@ -1,0 +1,56 @@
+stages:
+  - prepare
+  - build
+  - test
+  - docker-build
+  - deploy
+  - acceptance
+
+include:
+  - local: ci/gitlab/**.yml
+  - project: "networkteam/gitlab-ci-common"
+    file: "/includes/docker-build.yaml"
+
+# Template for component specific jobs
+#
+# We cannot use child pipelines currently, since some features like test reports and showing information
+# on the according merge request are not supported.
+.component-job:
+  # Needs a COMPONENT variable
+  # variables: COMPONENT: "neos"
+  rules:
+    # Only run the job on merge requests if changes in the component or CI definitions for component occurred
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .gitlab-ci.yml
+        - ci/gitlab/$COMPONENT.yml
+        - $COMPONENT/**/*
+    # Always run the job on the main branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # Always run the job for tags
+    - if: $CI_COMMIT_TAG
+
+# Copy (tag) docker image if _no_ changes for this component occurred and we are in a merge request
+.component-dockercopy-job:
+  stage: docker-build
+  image: registry.networkteam.com/networkteam/docker/oci-tools:latest
+  # Needs a COMPONENT variable
+  # variables: COMPONENT: "neos"
+  rules:
+    # Do not run the job on merge requests if changes in the component or CI definitions for component occurred
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .gitlab-ci.yml
+        - ci/gitlab/$COMPONENT.yml
+        - $COMPONENT/**/*
+      when: never
+    # Otherwise run the job for merge request pipelines
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  dependencies: []
+  script:
+    - skopeo login
+        --username $CI_REGISTRY_USER
+        --password $CI_REGISTRY_PASSWORD
+        $CI_REGISTRY
+    - skopeo copy docker://$CI_REGISTRY_IMAGE/$COMPONENT:latest docker://$CI_REGISTRY_IMAGE/$COMPONENT:$CI_REGISTRY_TAG

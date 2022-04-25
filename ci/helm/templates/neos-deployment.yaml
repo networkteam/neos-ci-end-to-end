@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-neos
+  labels:
+    {{- include "neos-ci.labels" . | nindent 4 }}
+    app.kubernetes.io/component: neos
+  {{- with merge (deepCopy .Values.neos.deploymentAnnotations) .Values.default.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.neos.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "neos-ci.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: neos
+  revisionHistoryLimit: {{ .Values.neos.revisionHistoryLimit }}
+  strategy:
+    type: {{ .Values.neos.strategyType }}
+  template:
+    metadata:
+      {{- with merge (deepCopy .Values.neos.podAnnotations) .Values.default.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "neos-ci.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: neos
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: php
+          image: "{{ .Values.neos.php.image.repository }}:{{ default .Values.default.image.tag .Values.neos.php.image.tag }}"
+          imagePullPolicy: {{ .Values.neos.php.image.pullPolicy }}
+          env:
+            {{- range $key, $value := .Values.neos.php.env }}
+            - name: {{ $key }}
+              value: {{ quote $value }}
+            {{- end }}
+            {{- if .Values.postgres.enabled }}
+            - name: FLOW_POSTGRESQL_HOST
+              value: {{ .Release.Name }}-postgres
+            - name: FLOW_POSTGRESQL_PORT
+              value: {{ .Values.postgres.service.port | quote }}
+            - name: FLOW_POSTGRESQL_USER
+              value: {{ .Values.postgres.env.POSTGRES_USER | quote }}
+            - name: FLOW_POSTGRESQL_PASSWORD
+              value: {{ .Values.postgres.env.POSTGRES_PASSWORD | quote }}
+            - name: FLOW_POSTGRESQL_DB
+              value: {{ .Values.postgres.env.POSTGRES_USER | quote }}
+            {{- else }}
+            - name: FLOW_POSTGRESQL_HOST
+              value: {{ .Values.neos.postgres.external.host | quote }}
+            - name: FLOW_POSTGRESQL_PORT
+              value: {{ .Values.neos.postgres.external.port | quote }}
+            - name: FLOW_POSTGRESQL_USER
+              value: {{ .Values.neos.postgres.external.user | quote }}
+            - name: FLOW_POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.neos.postgres.external.passwordSecret.name | quote }}
+                  key: {{ .Values.neos.postgres.external.passwordSecret.key | quote }}
+            - name: FLOW_POSTGRESQL_DB
+              value: {{ .Values.neos.postgres.external.database | quote }}
+            {{- end }}
+          ports:
+            - name: php-fpm
+              containerPort: 9000
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - php-fpm-healthcheck
+                - --listen-queue=20 # fails if there are more than 20 processes waiting in the fpm queue
+            initialDelaySeconds: 0
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - php-fpm-healthcheck
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
+          startupProbe:
+            exec:
+              command:
+                - php-fpm-healthcheck
+            # The container has to start within 30*10 seconds (5 minutes).
+            failureThreshold: 30
+            periodSeconds: 10
+          volumeMounts:
+          - mountPath: /app/Web/_Resources
+            name: web-resources
+          {{- if .Values.neos.persistence.enabled }}
+          - mountPath: /app/Data/Persistent
+            name: data-persistent
+          {{- end }}
+          resources:
+            {{- toYaml .Values.neos.php.resources | nindent 12 }}
+        - name: nginx
+          image: "{{ .Values.neos.nginx.image.repository }}:{{ .Values.neos.nginx.image.tag }}"
+          imagePullPolicy: {{ .Values.neos.nginx.image.pullPolicy }}
+          env:
+            {{- range $key, $value := .Values.neos.nginx.env }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+            - name: DOCUMENT_ROOT
+              value: /app/Web
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthcheck-webserver
+              port: http
+            failureThreshold: 1
+            periodSeconds: 10
+          volumeMounts:
+          - mountPath: /app/Web/_Resources
+            name: web-resources
+          {{- if .Values.neos.persistence.enabled }}
+          - mountPath: /app/Data/Persistent
+            name: data-persistent
+          {{- end }}
+          resources:
+            {{- toYaml .Values.neos.nginx.resources | nindent 12 }}
+      volumes:
+        # Use an empty dir volume to share web resources between the PHP container and the Nginx container
+        - name: web-resources
+          emptyDir: {}
+        {{- if .Values.neos.persistence.enabled }}
+        - name: data-persistent
+          persistentVolumeClaim:
+            claimName: {{ .Values.neos.persistence.existingPvc }}
+        {{- end }}
+      {{- with .Values.neos.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.neos.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.neos.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

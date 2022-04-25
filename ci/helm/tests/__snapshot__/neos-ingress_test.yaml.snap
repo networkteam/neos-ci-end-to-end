@@ -1,0 +1,34 @@
+matches snapshot with review deployment:
+  1: |
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      annotations:
+        app.gitlab.com/app: bar
+        app.gitlab.com/env: foo
+        nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+      labels:
+        app.kubernetes.io/component: neos
+        app.kubernetes.io/instance: my-release
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: neos-ci
+        app.kubernetes.io/version: 1.0.0
+        helm.sh/chart: neos-ci-0.1.0
+      name: my-release-neos
+    spec:
+      ingressClassName: nginx
+      rules:
+      - host: neos-my-release.k.networkteam.com
+        http:
+          paths:
+          - backend:
+              service:
+                name: my-release-neos
+                port:
+                  number: 80
+            path: /
+            pathType: ImplementationSpecific
+      tls:
+      - hosts:
+        - neos-my-release.k.networkteam.com
+        secretName: wildcard-k-networkteam-com

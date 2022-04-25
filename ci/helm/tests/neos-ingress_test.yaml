@@ -1,0 +1,25 @@
+templates:
+  - neos-ingress.yaml
+tests:
+  - it: matches snapshot with review deployment
+    set:
+      neos:
+        ingress:
+          hostnames:
+            - neos-my-release.k.networkteam.com
+          tls:
+            - secretName: wildcard-k-networkteam-com
+              hosts:
+                - neos-my-release.k.networkteam.com
+
+      default:
+        ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+        annotations:
+          app.gitlab.com/env: foo
+          app.gitlab.com/app: bar
+    release:
+      name: my-release
+    asserts:
+      - matchSnapshot: {}

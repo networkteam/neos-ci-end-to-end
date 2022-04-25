@@ -1,0 +1,13 @@
+templates:
+  - neos-service.yaml
+tests:
+  - it: matches snapshot with review deployment
+    set:
+      default:
+        annotations:
+          app.gitlab.com/env: foo
+          app.gitlab.com/app: bar
+    release:
+      name: my-release
+    asserts:
+      - matchSnapshot: {}

@@ -1,0 +1,63 @@
+deploy:staging:
+  extends: .helm-deploy-job
+  # Use helm image and run chart in ci/helm with overrides from env vars
+  image: $HELM_IMAGE
+  stage: deploy
+  rules:
+    # Only allow staging deployment for tagged releases (to have stable images)
+    - if: $CI_COMMIT_TAG
+      when: manual
+    ## Uncomment these lines to allow staging deployment for merge requests on branch "staging-deploy" (useful for development)
+    # - if: $CI_MERGE_REQUEST_ID  && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME == "staging-deploy"
+    #   when: manual
+  environment:
+    name: staging
+    url: https://neos-demo-staging.k.networkteam.com
+  variables:
+    RELEASE_NAME: staging
+  script:
+    - |
+      cat <<EOF > overrides.yaml
+      neos:
+        persistence:
+          enabled: true
+          existingPvc: staging-neos-data
+        postgres:
+          external:
+            host: pg-postgres14-pooler.postgres
+            user: dev_neos_ci_staging_neos_owner_user
+            passwordSecret:
+              name: staging-db-credentials
+              key: neos-password
+            database: dev_neos_ci_staging_neos
+        ingress:
+          hostnames:
+            - neos-demo-staging.k.networkteam.com
+          tls:
+            - secretName: wildcard-k-networkteam-com
+              hosts:
+                - neos-demo-staging.k.networkteam.com
+
+      default:
+        image:
+          tag: $CI_REGISTRY_TAG
+        ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+            nginx.ingress.kubernetes.io/auth-secret: basic-auth
+            nginx.ingress.kubernetes.io/auth-type: basic
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              add_header X-Robots-Tag "noindex, nofollow";
+              # Basic auth whitelist
+              satisfy any;
+              allow 192.168.0.0/16;
+              allow 10.233.0.0/16;
+        annotations:
+          app.gitlab.com/env: $CI_ENVIRONMENT_SLUG
+          app.gitlab.com/app: $CI_PROJECT_PATH_SLUG
+
+      EOF
+    # Upgrade (or install) the chart and wait until everything is ready, otherwise print logs of failed pods and fail the build
+    - |
+      (helm upgrade --install --wait -f overrides.yaml $RELEASE_NAME . && echo "Done.") \
+      || (inspect-failed-release $RELEASE_NAME && false)

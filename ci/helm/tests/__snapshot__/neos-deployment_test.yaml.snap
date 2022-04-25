@@ -1,0 +1,115 @@
+matches snapshot with review deployment:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        app.gitlab.com/app: bar
+        app.gitlab.com/env: foo
+      labels:
+        app.kubernetes.io/component: neos
+        app.kubernetes.io/instance: my-release
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: neos-ci
+        app.kubernetes.io/version: 1.0.0
+        helm.sh/chart: neos-ci-0.1.0
+      name: my-release-neos
+    spec:
+      replicas: 1
+      revisionHistoryLimit: 0
+      selector:
+        matchLabels:
+          app.kubernetes.io/component: neos
+          app.kubernetes.io/instance: my-release
+          app.kubernetes.io/name: neos-ci
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          annotations:
+            app.gitlab.com/app: bar
+            app.gitlab.com/env: foo
+          labels:
+            app.kubernetes.io/component: neos
+            app.kubernetes.io/instance: my-release
+            app.kubernetes.io/name: neos-ci
+        spec:
+          containers:
+          - env:
+            - name: FLOW_HTTP_TRUSTED_PROXIES
+              value: '*'
+            - name: FPM_FASTCGI_ADDRESS
+              value: localhost:9000
+            - name: NEOS_CREATE_ADMIN_USER_NAME
+              value: admin
+            - name: NEOS_CREATE_ADMIN_USER_PASSWORD
+              value: password
+            - name: NEOS_IMPORT_SITE_PACKAGE_KEY
+              value: Neos.Demo
+            - name: FLOW_POSTGRESQL_HOST
+              value: my-release-postgres
+            - name: FLOW_POSTGRESQL_PORT
+              value: "5432"
+            - name: FLOW_POSTGRESQL_USER
+              value: neos
+            - name: FLOW_POSTGRESQL_PASSWORD
+              value: only-for-development
+            - name: FLOW_POSTGRESQL_DB
+              value: neos
+            image: registry.networkteam.com/chlubek/neos-ci-end-to-end/neos:my-release
+            imagePullPolicy: Always
+            livenessProbe:
+              exec:
+                command:
+                - php-fpm-healthcheck
+                - --listen-queue=20
+              failureThreshold: 3
+              initialDelaySeconds: 0
+              periodSeconds: 20
+            name: php
+            ports:
+            - containerPort: 9000
+              name: php-fpm
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - php-fpm-healthcheck
+              failureThreshold: 3
+              initialDelaySeconds: 1
+              periodSeconds: 10
+            resources: {}
+            startupProbe:
+              exec:
+                command:
+                - php-fpm-healthcheck
+              failureThreshold: 30
+              periodSeconds: 10
+            volumeMounts:
+            - mountPath: /app/Web/_Resources
+              name: web-resources
+          - env:
+            - name: FPM_FASTCGI_ADDRESS
+              value: localhost:9000
+            - name: DOCUMENT_ROOT
+              value: /app/Web
+            image: registry.networkteam.com/networkteam/docker/nginx:1.3
+            imagePullPolicy: Always
+            name: nginx
+            ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            readinessProbe:
+              failureThreshold: 1
+              httpGet:
+                path: /healthcheck-webserver
+                port: http
+              periodSeconds: 10
+            resources: {}
+            volumeMounts:
+            - mountPath: /app/Web/_Resources
+              name: web-resources
+          volumes:
+          - emptyDir: {}
+            name: web-resources

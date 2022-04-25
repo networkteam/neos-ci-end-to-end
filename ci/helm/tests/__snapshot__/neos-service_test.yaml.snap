@@ -1,0 +1,27 @@
+matches snapshot with review deployment:
+  1: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        app.gitlab.com/app: bar
+        app.gitlab.com/env: foo
+      labels:
+        app.kubernetes.io/component: neos
+        app.kubernetes.io/instance: my-release
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: neos-ci
+        app.kubernetes.io/version: 1.0.0
+        helm.sh/chart: neos-ci-0.1.0
+      name: my-release-neos
+    spec:
+      ports:
+      - name: http
+        port: 80
+        protocol: TCP
+        targetPort: http
+      selector:
+        app.kubernetes.io/component: neos
+        app.kubernetes.io/instance: my-release
+        app.kubernetes.io/name: neos-ci
+      type: ClusterIP
