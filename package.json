@@ -1,0 +1,8 @@
+{
+  "name": "neos-ci-end-to-end",
+  "private": true,
+  "packageManager": "yarn@3.2.0",
+  "workspaces": [
+    "neos"
+  ]
+}

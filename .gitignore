@@ -1,0 +1,17 @@
+# Ignore editor metadata
+.vscode
+.idea
+
+# See https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+# Do not use Yarn zero installs
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# No Node modules or install logs should be versioned
+node_modules
+yarn-*.log
