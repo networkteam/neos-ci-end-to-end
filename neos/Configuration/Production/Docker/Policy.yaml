@@ -1,0 +1,17 @@
+# Allow access to Monocle styleguide publicly
+
+roles:
+  'Neos.Flow:Everybody':
+    privileges:
+      -
+        privilegeTarget: 'Sitegeist.Monocle:Styleguide.Api'
+        permission: GRANT
+      -
+        privilegeTarget: 'Sitegeist.Monocle:Styleguide.Preview'
+        permission: GRANT
+      -
+        privilegeTarget: 'Sitegeist.Monocle:Styleguide.Module'
+        permission: GRANT
+      -
+        privilegeTarget: 'Sitegeist.Monocle:Styleguide.Mock'
+        permission: GRANT

@@ -1,0 +1,94 @@
+#
+# Global Production/Docker settings (used only in Docker deployments)
+#
+
+Neos:
+  Flow:
+
+    persistence:
+      backendOptions:
+        host: '%env:FLOW_POSTGRESQL_HOST%'
+        port: '%env:FLOW_POSTGRESQL_PORT%'
+        dbname: '%env:FLOW_POSTGRESQL_DB%'
+        user: '%env:FLOW_POSTGRESQL_USER%'
+        password: '%env:FLOW_POSTGRESQL_PASSWORD%'
+
+    resource:
+      # A list of filename extensions that must not be uploaded through the resource
+      # management.
+      uploadExtensionBlacklist: &uploadExtensionBlacklist
+        'aspx': true
+        'cgi': true
+        'php3': true
+        'php4': true
+        'php5': true
+        'phtml': true
+        'php': true
+        'pl': true
+        'py': true
+        'pyc': true
+        'pyo': true
+        'rb': true
+
+      collections:
+
+        static:
+          target: dockerWebDirectoryStaticResourcesTarget
+
+        persistent:
+          target: dockerWebDirectoryPersistentResourcesTarget
+
+      targets:
+
+        dockerWebDirectoryStaticResourcesTarget:
+          target: 'Neos\Flow\ResourceManagement\Target\FileSystemTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Static/Packages/'
+            baseUri: '_Resources/Static/Packages/'
+            extensionBlacklist: *uploadExtensionBlacklist
+
+        dockerWebDirectoryPersistentResourcesTarget:
+          target: 'Neos\Flow\ResourceManagement\Target\FileSystemTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Persistent/'
+            baseUri: '_Resources/Persistent/'
+            extensionBlacklist: *uploadExtensionBlacklist
+
+            # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
+            subdivideHashPathSegment: true
+
+    # Log to STDOUT to have correct 12 factor app behavior for running in a container
+    log:
+      psr3:
+        'Neos\Flow\Log\PsrLoggerFactory':
+          systemLogger:
+            default:
+              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              options:
+                prefix: '[System]  '
+          securityLogger:
+            default:
+              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              options:
+                prefix: '[Security]'
+                # Info level has too much verbosity
+                severityThreshold: '%LOG_NOTICE%'
+          sqlLogger:
+            default:
+              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              options:
+                prefix: '[SQL]     '
+          i18nLogger:
+            default:
+              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              options:
+                prefix: '[I18N]    '
+
+  Imagine:
+    driver: 'Gmagick'
+    enabledDrivers:
+      Vips: false
+      Gd: false
+      Imagick: false
+      # Explicitly use Gmagick driver
+      Gmagick: true

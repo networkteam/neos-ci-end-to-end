@@ -1,0 +1,6 @@
+Neos:
+  Flow:
+    persistence:
+      backendOptions:
+        driver: 'pdo_pgsql'
+        charset: 'utf8'
