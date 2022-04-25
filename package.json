@@ -4,5 +4,19 @@
   "packageManager": "yarn@3.2.0",
   "workspaces": [
     "neos"
-  ]
+  ],
+  "scripts": {
+    "postinstall": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^7.0.0",
+    "prettier": "^2.6.2",
+    "yarnhook": "prerelease"
+  },
+  "dependencies": {
+    "lint-staged": "^12.4.0"
+  },
+  "lint-staged": {
+    "./*.md": "prettier -w"
+  }
 }
