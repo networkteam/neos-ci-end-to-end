@@ -30,7 +30,8 @@ neos:assets:
       - .yarn/unplugged
   artifacts:
     paths:
-      - neos/DistributionPackages/*/Resources/Public/Dist
+      - neos/DistributionPackages/Neos.Demo/Resources/Public/Scripts
+      - neos/DistributionPackages/Neos.Demo/Resources/Public/Styles
 
 # Install Composer dependencies
 neos:composer:

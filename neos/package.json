@@ -1,17 +1,21 @@
 {
-  "name": "neos",
+  "name": "@neos-ci/neos",
+  "version": "0.0.0",
   "description": "Neos Demo",
   "private": true,
   "workspaces": [
     "DistributionPackages/*"
   ],
   "scripts": {
-    "neos:start": "concurrently -n neos-demo:watch \"yarn neos-demo:start\"",
+    "neos:start": "concurrently -n neos-demo:start \"yarn neos-demo:start\"",
     "neos:build": "concurrently -n neos-demo:build \"yarn neos-demo:build\"",
     "neos:server": "./flow server:run",
-    "neos:dev": "concurrently -n neos-demo:watch,neos:server \"yarn neos-demo:start\" \"yarn neos:server\"",
+    "neos:dev": "concurrently -n neos-demo:start,neos:server \"yarn neos-demo:start\" \"yarn neos:server\"",
     "test": "playwright test",
     "playwright-install": "playwright install"
+  },
+  "dependencies": {
+    "@neos/demo": "^0.0.0"
   },
   "devDependencies": {
     "@playwright/test": "~1.21.1",

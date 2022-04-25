@@ -1355,6 +1355,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@neos-ci/neos@workspace:neos":
+  version: 0.0.0-use.local
+  resolution: "@neos-ci/neos@workspace:neos"
+  dependencies:
+    "@neos/demo": ^0.0.0
+    "@playwright/test": ~1.21.1
+    "@types/chai": ^4.3.1
+    "@types/mocha": ^9.1.1
+    concurrently: ^7.1.0
+  languageName: unknown
+  linkType: soft
+
 "@neos-ci/ui-components@workspace:common/packages/ui-components":
   version: 0.0.0-use.local
   resolution: "@neos-ci/ui-components@workspace:common/packages/ui-components"
@@ -1367,6 +1379,40 @@ __metadata:
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@neos/demo@^0.0.0, @neos/demo@workspace:neos/DistributionPackages/Neos.Demo":
+  version: 0.0.0-use.local
+  resolution: "@neos/demo@workspace:neos/DistributionPackages/Neos.Demo"
+  dependencies:
+    "@babel/core": ^7.15.0
+    "@babel/plugin-proposal-class-properties": ^7.14.5
+    "@babel/plugin-proposal-object-rest-spread": ^7.14.7
+    "@babel/preset-env": ^7.15.0
+    autoprefixer: ^10.3.1
+    babel-loader: ^8.2.2
+    compass-mixins: ^0.12.10
+    css-loader: ^6.2.0
+    cssnano: ^5.0.7
+    mini-css-extract-plugin: ^2.2.0
+    node-sass: ^6.0.1
+    node-sass-glob-importer: ^5.3.2
+    postcss: ^8.3.6
+    postcss-focus: ^5.0.1
+    postcss-loader: ^6.1.1
+    postcss-pxtorem: ^6.0.0
+    postcss-reporter: ^7.0.2
+    postcss-sort-media-queries: ^3.11.12
+    prettier: ^2.3.2
+    prettier-loader: ^3.3.0
+    sass-loader: ^12.1.0
+    stylelint: ^13.13.1
+    stylelint-config-recommended-scss: ^4.3.0
+    stylelint-scss: ^3.20.1
+    terser-webpack-plugin: ^5.1.4
+    webpack: ^5.50.0
+    webpack-cli: ^4.8.0
   languageName: unknown
   linkType: soft
 
@@ -1590,9 +1636,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 17.0.26
-  resolution: "@types/node@npm:17.0.26"
-  checksum: 59f92f46cc76703921ddf50d34b920afe3bbf916360e46321d54507b28c0ead4c3aed57cfdc64eee7c089ed12321dc4a728aa63a1205f7c1115105467f7a2b31
+  version: 17.0.27
+  resolution: "@types/node@npm:17.0.27"
+  checksum: 6645ca813c24dcb9893729ed6f87a9e415d6df03cb3e1ececa3a03ca845d3324c3808b4dc79c08a4b3c7d1ccd515e6d7e004db9c9123c9333e963675238e39fc
   languageName: node
   linkType: hard
 
@@ -1846,40 +1892,6 @@ __metadata:
   checksum: 8ed0d477ce3bc9c6fe2bf6a6a2cc316bb9c4127c5a7827bae947fa8ec34c7092395c5a283cc300c05b5fa01cbbfa1f938f410a7bf75db7c7846fea41949989ec
   languageName: node
   linkType: hard
-
-"Neos.Demo-7929e1@workspace:neos/DistributionPackages/Neos.Demo":
-  version: 0.0.0-use.local
-  resolution: "Neos.Demo-7929e1@workspace:neos/DistributionPackages/Neos.Demo"
-  dependencies:
-    "@babel/core": ^7.15.0
-    "@babel/plugin-proposal-class-properties": ^7.14.5
-    "@babel/plugin-proposal-object-rest-spread": ^7.14.7
-    "@babel/preset-env": ^7.15.0
-    autoprefixer: ^10.3.1
-    babel-loader: ^8.2.2
-    compass-mixins: ^0.12.10
-    css-loader: ^6.2.0
-    cssnano: ^5.0.7
-    mini-css-extract-plugin: ^2.2.0
-    node-sass: ^6.0.1
-    node-sass-glob-importer: ^5.3.2
-    postcss: ^8.3.6
-    postcss-focus: ^5.0.1
-    postcss-loader: ^6.1.1
-    postcss-pxtorem: ^6.0.0
-    postcss-reporter: ^7.0.2
-    postcss-sort-media-queries: ^3.11.12
-    prettier: ^2.3.2
-    prettier-loader: ^3.3.0
-    sass-loader: ^12.1.0
-    stylelint: ^13.13.1
-    stylelint-config-recommended-scss: ^4.3.0
-    stylelint-scss: ^3.20.1
-    terser-webpack-plugin: ^5.1.4
-    webpack: ^5.50.0
-    webpack-cli: ^4.8.0
-  languageName: unknown
-  linkType: soft
 
 "abbrev@npm:1":
   version: 1.1.1
@@ -3409,9 +3421,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.118":
-  version: 1.4.118
-  resolution: "electron-to-chromium@npm:1.4.118"
-  checksum: b1941bdff3ff8cb10a6f75f60527bff37fc43878b2ff4e0c1b5d6aa5062ea97df4e8c75e6d4c6eb97f0bab1cac6f8f1d799b7316e69f66b6a4b9b6773af97de2
+  version: 1.4.119
+  resolution: "electron-to-chromium@npm:1.4.119"
+  checksum: af77e5e0e606f6b639456b60eb76a9a2301cda049b911cd6439fe34c67f790471adb8b53e5e9a3df6ece5461ec394d33305b5db24c6c9b8fa653cef4446b6573
   languageName: node
   linkType: hard
 
@@ -5845,17 +5857,6 @@ __metadata:
     lint-staged: ^12.4.0
     prettier: ^2.6.2
     yarnhook: prerelease
-  languageName: unknown
-  linkType: soft
-
-"neos@workspace:neos":
-  version: 0.0.0-use.local
-  resolution: "neos@workspace:neos"
-  dependencies:
-    "@playwright/test": ~1.21.1
-    "@types/chai": ^4.3.1
-    "@types/mocha": ^9.1.1
-    concurrently: ^7.1.0
   languageName: unknown
   linkType: soft
 

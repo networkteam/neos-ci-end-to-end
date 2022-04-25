@@ -1,4 +1,6 @@
 {
+  "name": "@neos/demo",
+  "version": "0.0.0",
   "license": "GPL-3.0-or-later",
   "private": true,
   "browserslist": [
@@ -11,6 +13,8 @@
     "not op_mob <= 12.1"
   ],
   "scripts": {
+    "neos-demo:build": "yarn build",
+    "neos-demo:start": "yarn start",
     "start": "webpack --watch",
     "build": "webpack --mode production",
     "pipeline": "yarn install;yarn build"

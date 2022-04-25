@@ -3,3 +3,6 @@
 .idea
 
 node_modules
+
+/Resources/Public/Scripts/
+/Resources/Public/Styles/
