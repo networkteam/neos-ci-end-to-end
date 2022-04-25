@@ -6,6 +6,7 @@
     "DistributionPackages/*"
   ],
   "scripts": {
+    "neos-demo:build": "echo 'Do build process here'",
     "neos:start": "concurrently -n neos-demo:watch \"yarn neos-demo:start\"",
     "neos:build": "concurrently -n neos-demo:build \"yarn neos-demo:build\"",
     "neos:server": "./flow server:run",
