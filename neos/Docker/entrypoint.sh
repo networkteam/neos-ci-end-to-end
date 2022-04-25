@@ -7,8 +7,8 @@ TIMEOUT=100 wait-for-it.sh $FLOW_POSTGRESQL_HOST:$FLOW_POSTGRESQL_PORT
 echo "Setting up DB schema..."
 ./flow doctrine:migrate
 
-echo "Execute command migrations..."
-./flow networkteam.flow.commandmigrations:commandmigrations:migrate
+# echo "Execute command migrations..."
+# ./flow networkteam.flow.commandmigrations:commandmigrations:migrate
 
 # If an admin user name is specified, the user is created
 if [ -n "$NEOS_CREATE_ADMIN_USER_NAME" ]; then
