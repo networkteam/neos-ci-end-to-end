@@ -593,6 +593,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@neos-ci/ui-components@workspace:common/packages/ui-components":
+  version: 0.0.0-use.local
+  resolution: "@neos-ci/ui-components@workspace:common/packages/ui-components"
+  dependencies:
+    "@playwright/test": ~1.21.1
+    "@types/chai": ^4.3.1
+    "@types/mocha": ^9.1.1
+    classnames: ^2.3.1
+    prettier: ^2.6.2
+  peerDependencies:
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "@playwright/test@npm:~1.21.1":
   version: 1.21.1
   resolution: "@playwright/test@npm:1.21.1"
@@ -888,6 +903,13 @@ __metadata:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
   checksum: fe75c9d5c76a7a98d45495b91b2172fa3b7a09e0cc9370e5c8feb1c567b85c4288e2b3fded7cfdd7359ac28d6b3844feb8b82b8686842e93d23c827c417e83fc
+  languageName: node
+  linkType: hard
+
+"classnames@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "classnames@npm:2.3.1"
+  checksum: 14db8889d56c267a591f08b0834989fe542d47fac659af5a539e110cc4266694e8de86e4e3bbd271157dbd831361310a8293e0167141e80b0f03a0f175c80960
   languageName: node
   linkType: hard
 

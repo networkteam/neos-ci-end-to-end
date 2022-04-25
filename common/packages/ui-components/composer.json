@@ -1,0 +1,18 @@
+{
+    "name": "neos-ci/ui-components",
+    "type": "neos-package",
+    "description": "Neos CI / Shared Components",
+    "require": {
+        "neos/neos": "*",
+        "neos/nodetypes": "*",
+        "neos/seo": "*",
+        "sitegeist/monocle": "*",
+        "packagefactory/atomicfusion-classnames": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "NeosCi\\Ui\\Components\\": "Classes"
+        }
+    }
+}
+
