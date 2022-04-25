@@ -94,10 +94,10 @@ spec:
             failureThreshold: 30
             periodSeconds: 10
           volumeMounts:
-          - mountPath: /app/Web/_Resources
+          - mountPath: /var/www/html/Web/_Resources
             name: web-resources
           {{- if .Values.neos.persistence.enabled }}
-          - mountPath: /app/Data/Persistent
+          - mountPath: /var/www/html/Data/Persistent
             name: data-persistent
           {{- end }}
           resources:
@@ -111,7 +111,7 @@ spec:
               value: {{ $value }}
             {{- end }}
             - name: DOCUMENT_ROOT
-              value: /app/Web
+              value: /var/www/html/Web
           ports:
             - name: http
               containerPort: 8080
@@ -123,10 +123,10 @@ spec:
             failureThreshold: 1
             periodSeconds: 10
           volumeMounts:
-          - mountPath: /app/Web/_Resources
+          - mountPath: /var/www/html/Web/_Resources
             name: web-resources
           {{- if .Values.neos.persistence.enabled }}
-          - mountPath: /app/Data/Persistent
+          - mountPath: /var/www/html/Data/Persistent
             name: data-persistent
           {{- end }}
           resources:

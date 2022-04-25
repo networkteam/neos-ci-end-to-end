@@ -72,12 +72,12 @@ tests:
           path: spec.template.spec.containers[0].volumeMounts
           content:
             name: data-persistent
-            mountPath: /app/Data/Persistent
+            mountPath: /var/www/html/Data/Persistent
       - contains:
           path: spec.template.spec.containers[1].volumeMounts
           content:
             name: data-persistent
-            mountPath: /app/Data/Persistent
+            mountPath: /var/www/html/Data/Persistent
       - contains:
           path: spec.template.spec.volumes
           content:

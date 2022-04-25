@@ -1,0 +1,13 @@
+**/.idea/*
+**/.gradle
+**/.project
+**/.classpath
+**/.directory
+**/.settings
+**/build
+**/bin
+**/out
+.git/**
+/output
+/tmp
+**/node_modules/*

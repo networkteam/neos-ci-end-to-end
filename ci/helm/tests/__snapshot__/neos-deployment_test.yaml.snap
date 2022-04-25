@@ -86,13 +86,13 @@ matches snapshot with review deployment:
               failureThreshold: 30
               periodSeconds: 10
             volumeMounts:
-            - mountPath: /app/Web/_Resources
+            - mountPath: /var/www/html/Web/_Resources
               name: web-resources
           - env:
             - name: FPM_FASTCGI_ADDRESS
               value: localhost:9000
             - name: DOCUMENT_ROOT
-              value: /app/Web
+              value: /var/www/html/Web
             image: registry.networkteam.com/networkteam/docker/nginx:1.3
             imagePullPolicy: Always
             name: nginx
@@ -108,7 +108,7 @@ matches snapshot with review deployment:
               periodSeconds: 10
             resources: {}
             volumeMounts:
-            - mountPath: /app/Web/_Resources
+            - mountPath: /var/www/html/Web/_Resources
               name: web-resources
           volumes:
           - emptyDir: {}
