@@ -29,5 +29,7 @@ ci-helm:test:
   before_script:
     - !reference [.docker-build-default, before_script]
     - cd ci/helm
-    - LATEST_TAG=$(git describe --tags --abbrev=0) yq -i '.version = strenv(LATEST_TAG)' Chart.yaml
+    # Use the latest Git tag (or 0.0.0 if no tag exists) as the chart version (it is not possible to set it via a flag)
+    - LATEST_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0") yq -i '.version = strenv(LATEST_TAG)' Chart.yaml
+    # Use the commit ref name (branch or tag name) as the app version
     - yq -i '.appVersion = strenv(CI_COMMIT_REF_NAME)' Chart.yaml

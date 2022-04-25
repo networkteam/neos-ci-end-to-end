@@ -36,6 +36,7 @@ neos:assets:
 neos:composer:
   extends: .neos-job
   stage: build
+  # Neos needs the UI components package to be built to include the assets
   needs:
     - neos:assets
   dependencies:
