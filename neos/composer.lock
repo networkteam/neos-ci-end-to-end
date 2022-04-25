@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afc81f06a7ce56229c34ac6920b7d273",
+    "content-hash": "a9b559dc8e7cec1387236423f5cafc21",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -6671,6 +6671,49 @@
             "time": "2022-03-27T08:02:49+00:00"
         },
         {
+            "name": "networkteam/container-ready",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/networkteam/Networkteam.ContainerReady.git",
+                "reference": "b99cce78482948d25753b2d974123857b18f0531"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/networkteam/Networkteam.ContainerReady/zipball/b99cce78482948d25753b2d974123857b18f0531",
+                "reference": "b99cce78482948d25753b2d974123857b18f0531",
+                "shasum": ""
+            },
+            "require": {
+                "neos/flow-log": "^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~9.1"
+            },
+            "default-branch": true,
+            "type": "package",
+            "extra": {
+                "neos": {
+                    "package-key": "Networkteam.ContainerReady"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Networkteam\\ContainerReady\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Utilities to run Flow and Neos applications in containers",
+            "support": {
+                "issues": "https://github.com/networkteam/Networkteam.ContainerReady/issues",
+                "source": "https://github.com/networkteam/Networkteam.ContainerReady/tree/main"
+            },
+            "time": "2022-04-25T15:52:15+00:00"
+        },
+        {
             "name": "psr/cache",
             "version": "3.0.0",
             "source": {
@@ -11363,7 +11406,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "neos/setup": 20,
-        "neos/neos-setup": 20
+        "neos/neos-setup": 20,
+        "networkteam/container-ready": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

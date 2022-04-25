@@ -32,7 +32,8 @@
 
         "neos/cli-setup": "~8.0.0",
         "neos/setup": "@dev",
-        "neos/neos-setup": "@dev"
+        "neos/neos-setup": "@dev",
+        "networkteam/container-ready": "@dev"
     },
     "require-dev": {
         "neos/buildessentials": "~8.0.0",

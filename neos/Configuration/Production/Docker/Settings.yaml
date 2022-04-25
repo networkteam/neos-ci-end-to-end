@@ -63,24 +63,24 @@ Neos:
         'Neos\Flow\Log\PsrLoggerFactory':
           systemLogger:
             default:
-              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              class: Networkteam\ContainerReady\Log\Backend\ConsoleBackend
               options:
                 prefix: '[System]  '
           securityLogger:
             default:
-              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              class: Networkteam\ContainerReady\Log\Backend\ConsoleBackend
               options:
                 prefix: '[Security]'
                 # Info level has too much verbosity
                 severityThreshold: '%LOG_NOTICE%'
           sqlLogger:
             default:
-              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              class: Networkteam\ContainerReady\Log\Backend\ConsoleBackend
               options:
                 prefix: '[SQL]     '
           i18nLogger:
             default:
-              class: Networkteam\Util\Log\Backend\ConsoleBackend
+              class: Networkteam\ContainerReady\Log\Backend\ConsoleBackend
               options:
                 prefix: '[I18N]    '
 
