@@ -31,8 +31,11 @@ neos:assets:
 neos:composer:
   extends: .neos-job
   stage: build
-  needs: []
-  dependencies: []
+  # Depend on asset output for correct usage of built assets when Composer copies local packages
+  needs:
+    - neos:assets
+  dependencies:
+    - neos:assets
   image: registry.networkteam.com/networkteam/build/php:8.1
   script:
     # COMPOSER_MIRROR_PATH_REPOS is important to prevent issues with symlinks in containers (if packages in monorepo are required)
