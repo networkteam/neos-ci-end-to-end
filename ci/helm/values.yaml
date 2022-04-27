@@ -11,7 +11,7 @@ default:
   annotations: {}
 
 postgres:
-  # A locally deployed postgres database (without persistence)
+  # A locally deployed PostgreSQL database (without persistence)
   enabled: false
 
   image:
@@ -20,8 +20,8 @@ postgres:
     pullPolicy: Always
 
   env:
-    POSTGRES_PASSWORD: only-for-development
     POSTGRES_USER: neos
+    POSTGRES_PASSWORD: only-for-development
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious

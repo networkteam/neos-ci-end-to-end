@@ -1,0 +1,17 @@
+# Docker Compose setup for dependencies (database etc.) of the neos project component.
+# These services can be started to run a local instance of the neos project component.
+
+version: '3.9'
+services:
+  db:
+    image: 'postgres:13.5'
+    environment:
+      POSTGRES_PASSWORD: dev-db-secret
+      POSTGRES_USER: neos
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - '54329:5432'
+
+volumes:
+  db_data:

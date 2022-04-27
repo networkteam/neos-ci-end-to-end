@@ -41,7 +41,7 @@ prototype(Neos.Demo:Content.ContactForm) < prototype(Neos.Neos:ContentComponent)
         action {
             message {
                 type = 'Neos.Fusion.Form.Runtime:Message'
-                options.message = ${q(node).property('message')}
+                options.message = afx`<div class="contact-form__message"><h1>{q(node).property('message')}</h1></div>`
             }
 
             email {
