@@ -37,7 +37,7 @@ class FlickrController extends ActionController
     public function tagStreamAction()
     {
         $tags = $this->request->getInternalArgument('__tags');
-        if ($tags === null || $tags === '') {
+        if (!is_string($tags) || $tags === '') {
             return '<p>Please specify Flickr tag(s)</p>';
         }
         $endpointUrl = sprintf($this->tagStreamUriPattern, $tags);
