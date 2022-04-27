@@ -76,7 +76,7 @@ neos:psalm:report:
     - neos:psalm
   image: registry.networkteam.com/networkteam/docker/reviewdog:latest
   script:
-    - reviewdog -f=psalm -reporter=gitlab-mr-discussion < Build/Report/psalm.txt
+    - reviewdog -f=psalm -reporter=gitlab-mr-discussion -tee < Build/Report/psalm.txt
   rules:
   # Only report for merge requests
   - if: $CI_MERGE_REQUEST_ID
