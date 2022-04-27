@@ -12,7 +12,7 @@ prototype(Neos.Demo:Document.Fragment.Menu.Main) < prototype(Neos.Fusion:Compone
                     <span class="icon-bar"></span>
                 </button>
 
-                <Neos.Neos:NodeLink node={props.root}>
+                <Neos.Neos:NodeLink node={props.root} attributes.aria-label="Foo">
                     {StaticResource.content('Neos.Demo', 'Public/Images/logo.svg', true)}
                 </Neos.Neos:NodeLink>
             </div>

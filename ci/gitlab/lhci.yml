@@ -1,0 +1,14 @@
+.lhci:
+  variables:
+    LHCI_COLLECT_URL: "/"
+
+lhci:
+  extends: .lhci
+  stage: acceptance
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        LHCI_COLLECT_BASE_URL: "https://neos-demo-integration.k.networkteam.com/"
+    - if: $CI_MERGE_REQUEST_ID
+      variables:
+        LHCI_COLLECT_BASE_URL: "https://neos-demo-$CI_COMMIT_REF_SLUG.k.networkteam.com/"

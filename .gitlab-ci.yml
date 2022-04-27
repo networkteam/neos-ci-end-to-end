@@ -10,6 +10,8 @@ include:
   - local: ci/gitlab/**.yml
   - project: "networkteam/gitlab-ci-common"
     file: "/includes/docker-build.yaml"
+  - project: networkteam/gitlab-ci-common
+    file: includes/lighthouse-ci.yaml
 
 # Template for component specific jobs
 #
