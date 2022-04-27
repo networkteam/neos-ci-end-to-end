@@ -5,7 +5,7 @@
   "packageManager": "yarn@3.2.0",
   "workspaces": [
     "neos",
-    "common/packages/*"
+    "packages/*"
   ],
   "scripts": {
     "postinstall": "husky install"

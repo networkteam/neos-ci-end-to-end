@@ -1,6 +1,6 @@
 import { test as base, expect, Page, Locator } from '@playwright/test';
 
-import { FormObject } from '@neos-ci/ui-components/test-utils';
+import { FormObject } from '@neos-ci/testing';
 
 // Declare custom fixtures to re-use setup of page and contact form
 type TestFixtures = {

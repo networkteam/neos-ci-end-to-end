@@ -6,12 +6,6 @@
     - !reference [.docker-build-default, before_script]
     - export COMPOSER_CACHE_DIR=${CI_PROJECT_DIR}/.composer
     - cd neos
-  rules:
-    # Also run jobs if shared UI components changed
-    - if: $CI_MERGE_REQUEST_ID
-      changes:
-        - common/packages/ui-components/**/*
-    - !reference [.component-job, rules]
 
 # Build frontend assets
 neos:assets:
@@ -37,7 +31,7 @@ neos:assets:
 neos:composer:
   extends: .neos-job
   stage: build
-  # Neos needs the UI components package to be built to include the assets
+  # Neos needs to include the built assets
   needs:
     - neos:assets
   dependencies:

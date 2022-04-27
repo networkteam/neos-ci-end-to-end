@@ -20,7 +20,6 @@
     "pipeline": "yarn install;yarn build"
   },
   "dependencies": {
-    "@neos-ci/ui-components": "*",
     "compass-mixins": "^0.12.10"
   },
   "devDependencies": {

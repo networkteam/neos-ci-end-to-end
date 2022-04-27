@@ -1367,18 +1367,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@neos-ci/ui-components@*, @neos-ci/ui-components@workspace:common/packages/ui-components":
+"@neos-ci/testing@workspace:packages/testing":
   version: 0.0.0-use.local
-  resolution: "@neos-ci/ui-components@workspace:common/packages/ui-components"
-  dependencies:
-    "@playwright/test": ~1.21.1
-    "@types/chai": ^4.3.1
-    "@types/mocha": ^9.1.1
-    classnames: ^2.3.1
-    prettier: ^2.6.2
+  resolution: "@neos-ci/testing@workspace:packages/testing"
   peerDependencies:
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    "@playwright/test": ~1.21.1
   languageName: unknown
   linkType: soft
 
@@ -1390,7 +1383,6 @@ __metadata:
     "@babel/plugin-proposal-class-properties": ^7.14.5
     "@babel/plugin-proposal-object-rest-spread": ^7.14.7
     "@babel/preset-env": ^7.15.0
-    "@neos-ci/ui-components": "*"
     autoprefixer: ^10.3.1
     babel-loader: ^8.2.2
     compass-mixins: ^0.12.10
@@ -2680,13 +2672,6 @@ __metadata:
     isobject: ^3.0.0
     static-extend: ^0.1.1
   checksum: be108900801e639e50f96a7e4bfa8867c753a7750a7603879f3981f8b0a89cba657497a2d5f40cd4ea557ff15d535a100818bb486baf6e26fe5d7872e75f1078
-  languageName: node
-  linkType: hard
-
-"classnames@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "classnames@npm:2.3.1"
-  checksum: 14db8889d56c267a591f08b0834989fe542d47fac659af5a539e110cc4266694e8de86e4e3bbd271157dbd831361310a8293e0167141e80b0f03a0f175c80960
   languageName: node
   linkType: hard
 

@@ -1,4 +1,0 @@
-##
-# Include all .fusion files
-#
-include: ./**/*.fusion
