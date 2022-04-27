@@ -13,7 +13,10 @@ prototype(Neos.Demo:Document.Fragment.Menu.Main) < prototype(Neos.Fusion:Compone
                 </button>
 
                 <Neos.Neos:NodeLink node={props.root}>
-                    {StaticResource.content('Neos.Demo', 'Public/Images/logo.svg', true)}
+                    <figure>
+                        {StaticResource.content('Neos.Demo', 'Public/Images/logo.svg', true)}
+                        <figcaption class="hidden">{props.root.label}</figcaption>
+                    </figure>
                 </Neos.Neos:NodeLink>
             </div>
 
