@@ -55,6 +55,8 @@ neos:composer:
 
 # Lint PHP code with Psalm
 neos:psalm:
+  # Psalm outputs errors as exit code 2, we don't want to fail the pipeline because of this
+  allow_failure: true
   extends: .neos-job
   stage: test
   needs:
@@ -63,30 +65,10 @@ neos:psalm:
     - neos:composer
   image: registry.networkteam.com/networkteam/build/php:8.1
   script:
-    # Ignore Psalm exit code due to code issues
-    - bin/psalm --report=Build/Report/psalm.txt || true
+    - bin/psalm --report=Build/Report/codeclimate.json
   artifacts:
-    paths:
-      - neos/Build/Report/psalm.txt
-
-# Report Psalm errors in merge request
-neos:psalm:report:
-  extends: .neos-job
-  stage: test
-  needs:
-    - neos:psalm
-  dependencies:
-    - neos:psalm
-  image: registry.networkteam.com/networkteam/docker/reviewdog:latest
-  script:
-    - reviewdog -f=psalm -reporter=gitlab-mr-discussion -diff='git diff HEAD~' -filter-mode=file < Build/Report/psalm.txt
-  rules:
-  # Only report for merge requests
-  - if: $CI_MERGE_REQUEST_ID
-    changes:
-      - .gitlab-ci.yml
-      - ci/gitlab/$COMPONENT.yml
-      - $COMPONENT/**/*
+    reports:
+      codequality: neos/Build/Report/codeclimate.json
 
 # Build docker image for PHP FPM
 neos:docker:
