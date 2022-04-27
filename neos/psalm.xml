@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<psalm errorLevel="1" resolveFromConfigFile="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://getpsalm.org/schema/config" xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd">
+    <projectFiles>
+        <directory name="DistributionPackages" />
+        <ignoreFiles>
+            <directory name="Packages/Libraries" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <MissingConstructor errorLevel="suppress" />
+        <MixedAssignment>
+            <errorLevel type="suppress">
+                <file name="DistributionPackages/*/Migrations/*/*.php" />
+            </errorLevel>
+        </MixedAssignment>
+        <MixedArgument>
+            <errorLevel type="suppress">
+                <file name="DistributionPackages/*/Migrations/*/*.php" />
+            </errorLevel>
+        </MixedArgument>
+    </issueHandlers>
+</psalm>
